@@ -6,8 +6,10 @@ const path = require('path');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Storage configuration
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
@@ -17,7 +19,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter to accept only CSV files
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === 'text/csv') {
     cb(null, true);
@@ -28,12 +29,10 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, fileFilter });
 
-// Route to handle file upload
 app.post('/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded or invalid file type.' });
   }
-  // Proceed with plagiarism checking logic here
   res.json({ message: 'File uploaded successfully.', filename: req.file.filename });
 });
 
